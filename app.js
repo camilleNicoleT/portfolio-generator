@@ -1,12 +1,13 @@
 const inquirer = require('inquirer');
-
+const fs = require('fs');
+const generatePage = require('./src/page-template');
 
 const promptUser = () => {
   return inquirer.prompt([
     {
       type: 'input',
       name: 'name',
-      message: 'What is your (Required)',
+      message: 'What is your name? (Required)',
       validate: nameInput => {
         if (nameInput) {
           return true;
@@ -54,16 +55,13 @@ const promptUser = () => {
 
 
 const promptProject = portfolioData => {
- // If there's no 'projects' array property, create one
-if (!portfolioData.projects) {
-  portfolioData.projects = [];
-}
-
+ 
   console.log(`
   =================
   Add a New Project 
   ==================
   `);
+  // If there's no 'projects' array property, create one
   if (!portfolioData.projects) {
     portfolioData.projects = [];
   }
@@ -140,16 +138,13 @@ if (!portfolioData.projects) {
 promptUser()
 .then(promptProject)
 .then(portfolioData => {
-  console.log(portfolioData)
-  
+   const pageHTML = generatePage();
+
+    fs.writeFile('./index.html', pageHTML, err => {
+      if (err) throw new Error(err);
+
+      console.log('Page created! Check out index.html in this directory to see it!');
+    });
 });
-// const fs = require('fs');
-// const generatePage = require('./src/page-template');
 
-// const pageHTML = generatePage(name, github);
 
-// fs.writeFile('./index.html', pageHTML, err => {
-//   if (err) throw err;
-
-//   console.log('Portfolio complete! Check out index.html to see the output!');
-// });
